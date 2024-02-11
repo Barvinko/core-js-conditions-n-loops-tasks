@@ -335,8 +335,50 @@ function getBalanceIndex(arr) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
+function getSpiralMatrix(size) {
+  const matrix = [];
+  for (let i = 0; i < size; i += 1) {
+    matrix[i] = [];
+  }
+
+  let num = 1;
+
+  let top = 0;
+  let bottom = size - 1;
+  let left = 0;
+  let right = size - 1;
+
+  while (num <= size * size) {
+    for (let i = left; i <= right; i += 1) {
+      matrix[top][i] = num;
+      num += 1;
+    }
+
+    top += 1;
+
+    for (let i = top; i <= bottom; i += 1) {
+      matrix[i][right] = num;
+      num += 1;
+    }
+
+    right -= 1;
+
+    for (let i = right; i >= left; i -= 1) {
+      matrix[bottom][i] = num;
+      num += 1;
+    }
+
+    bottom -= 1;
+
+    for (let i = bottom; i >= top; i -= 1) {
+      matrix[i][left] = num;
+      num += 1;
+    }
+
+    left += 1;
+  }
+
+  return matrix;
 }
 
 /**
@@ -354,8 +396,27 @@ function getSpiralMatrix(/* size */) {
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
-  throw new Error('Not implemented');
+function rotateMatrix(matrix) {
+  const num = matrix.length;
+  const result = [...matrix];
+
+  for (let i = 0; i < num; i += 1) {
+    for (let j = 0; j < i; j += 1) {
+      const temp = result[i][j];
+      result[i][j] = result[j][i];
+      result[j][i] = temp;
+    }
+  }
+
+  for (let i = 0; i < num; i += 1) {
+    for (let j = 0; j < Math.floor(num / 2); j += 1) {
+      const temp = result[i][j];
+      result[i][j] = result[i][num - 1 - j];
+      result[i][num - 1 - j] = temp;
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -372,10 +433,40 @@ function rotateMatrix(/* matrix */) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
-}
+function sortByAsc(arr) {
+  const result = arr;
 
+  function swap(arrSwap, i, j) {
+    const swappedArr = arrSwap;
+    const temp = swappedArr[i];
+    swappedArr[i] = swappedArr[j];
+    swappedArr[j] = temp;
+  }
+
+  function partition(arrPartion, low, high) {
+    const pivot = arrPartion[high];
+    let i = low - 1;
+
+    for (let j = low; j < high; j += 1) {
+      if (arrPartion[j] <= pivot) {
+        i += 1;
+        swap(arrPartion, i, j);
+      }
+    }
+    swap(arrPartion, i + 1, high);
+    return i + 1;
+  }
+
+  function quickSort(arrSort, low, high) {
+    if (low < high) {
+      const partitionIndex = partition(arrSort, low, high);
+      quickSort(arrSort, low, partitionIndex - 1);
+      quickSort(arrSort, partitionIndex + 1, high);
+    }
+  }
+
+  quickSort(result, 0, result.length - 1);
+}
 /**
  * Shuffles characters in a string so that the characters with an odd index are moved to the end of the string at each iteration.
  * Take into account that the string can be very long and the number of iterations is large. Consider how you can optimize your solution.
