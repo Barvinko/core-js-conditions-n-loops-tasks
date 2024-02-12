@@ -484,8 +484,49 @@ function sortByAsc(arr) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  function shuffleCharacters(characters) {
+    const result = [];
+    let evenIndex = 0;
+    let oddIndex = characters.length / 2;
+    for (let i = 1; i < characters.length; i += 2) {
+      result[oddIndex] = characters[i];
+      result[evenIndex] = characters[i - 1];
+      evenIndex += 1;
+      oddIndex += 1;
+    }
+    return result;
+  }
+
+  function arrayToString(characters) {
+    let result = '';
+    for (let i = 0; i < characters.length; i += 1) {
+      result += characters[i];
+    }
+    return result;
+  }
+
+  let countIterations = 1;
+  let characters = str;
+  let iterationsToRepeat;
+  while (countIterations <= iterations) {
+    characters = shuffleCharacters(characters);
+    if (arrayToString(characters) === str) {
+      iterationsToRepeat = countIterations;
+      break;
+    }
+    countIterations += 1;
+  }
+
+  const optimalIterations = iterations % iterationsToRepeat;
+
+  countIterations = 1;
+  while (countIterations <= optimalIterations) {
+    characters = shuffleCharacters(characters);
+    countIterations += 1;
+  }
+
+  return arrayToString(characters);
 }
 
 /**
@@ -505,8 +546,59 @@ function shuffleChar(/* str, iterations */) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  let startNumber = number;
+
+  function toNumber(arr) {
+    return arr.reduce((result, digit) => result * 10 + digit, 0);
+  }
+
+  const digits = [];
+  while (startNumber > 0) {
+    digits.unshift(startNumber % 10);
+    startNumber = Math.floor(startNumber / 10);
+  }
+
+  let pivotIndex = -1;
+
+  for (let i = digits.length - 1; i > 0; i -= 1) {
+    if (digits[i] > digits[i - 1]) {
+      pivotIndex = i - 1;
+      break;
+    }
+  }
+
+  if (pivotIndex === -1) return toNumber(digits);
+
+  const pivotValue = digits[pivotIndex];
+  let nextHigher = Infinity;
+  let nextHigherIndex = -1;
+
+  for (let i = pivotIndex + 1; i < digits.length; i += 1) {
+    if (digits[i] > pivotValue && digits[i] < nextHigher) {
+      nextHigher = digits[i];
+      nextHigherIndex = i;
+    }
+  }
+
+  [digits[pivotIndex], digits[nextHigherIndex]] = [
+    digits[nextHigherIndex],
+    digits[pivotIndex],
+  ];
+
+  const leftPart = [];
+  for (let i = 0; i <= pivotIndex; i += 1) {
+    leftPart.push(digits[i]);
+  }
+
+  const rightPart = [];
+  for (let i = pivotIndex + 1; i < digits.length; i += 1) {
+    rightPart.push(digits[i]);
+  }
+  rightPart.sort((a, b) => a - b);
+
+  const result = toNumber([...leftPart, ...rightPart]);
+  return result;
 }
 
 module.exports = {
